@@ -30,10 +30,10 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 	// we must set all Headers before WriteHeader
 	if r.Method != "POST" {
 
-		w.Header().Set("Allow", "POST")
+		w.Header().Set("Allow", http.MethodPost)
 		// w.WriteHeader(405)
 		// w.Write([]byte("Method Not Allowed!"))
-		http.Error(w, "Method not Allowed!", 405)
+		http.Error(w, "Method not Allowed!", http.StatusMethodNotAllowed)
 
 		return
 	}
