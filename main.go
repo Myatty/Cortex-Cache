@@ -12,11 +12,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello from Cortex Cache"))
 }
 
+func snippetView(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Displaying Snippets"))
+}
+
+func snippetCreate(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Creating Snippet"))
+}
+
 func main() {
 
 	// ServeMux is a router which in this case register home function as handler for URL "/"
+	// URL "/" pattern is a catch-all, all URL requests will be handled by this
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", home)
+	mux.HandleFunc("/snippet/view", snippetView)
+	mux.HandleFunc("/snippet/create", snippetCreate)
 
 	// http.ListenAndServe() starts new web server and now it listens on tcp port 4000
 	// Note: any error returned by http.ListenAndServe is always non-nil
