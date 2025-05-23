@@ -25,6 +25,19 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 func snippetCreate(w http.ResponseWriter, r *http.Request) {
+
+	// if we wanna send a non 200 status code, we must call w.WriteHeader()(which limit to only one for each response)
+	// we must set all Headers before WriteHeader
+	if r.Method != "POST" {
+
+		w.Header().Set("Allow", "POST")
+		// w.WriteHeader(405)
+		// w.Write([]byte("Method Not Allowed!"))
+		http.Error(w, "Method not Allowed!", 405)
+
+		return
+	}
+
 	w.Write([]byte("Creating Snippet"))
 }
 
@@ -32,6 +45,8 @@ func main() {
 
 	// ServeMux is a router which in this case register home function as handler for URL "/"
 	// URL "/" sub-tree pattern is a catch-all, all URL requests will be handled by this(its like "/**")
+
+	// create our own mux becoz DefaultServeMux is a global variable, any package can access it (Security Conerns)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/snippet/view", snippetView)
