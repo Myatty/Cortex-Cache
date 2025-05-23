@@ -23,7 +23,7 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	// ServeMux is a router which in this case register home function as handler for URL "/"
-	// URL "/" pattern is a catch-all, all URL requests will be handled by this
+	// URL "/" sub-tree pattern is a catch-all, all URL requests will be handled by this(its like "/**")
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/snippet/view", snippetView)
