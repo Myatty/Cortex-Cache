@@ -9,6 +9,14 @@ import (
 // http.ResponseWriter provides method for HTTP Response and sending it to user
 // *http.Request is pointer to struct which holds info about current request(HTTP method and URL being requested)
 func home(w http.ResponseWriter, r *http.Request) {
+
+	// checks if URL path is not "/", it returns error Page
+	// if we dont return it will also writes (w.Write)
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
 	w.Write([]byte("Hello from Cortex Cache"))
 }
 
