@@ -1,17 +1,16 @@
+{{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Home - Cortext Cache</title>
+    <title>{{template "title" .}} - Cortext Cache</title>
   </head>
   <body>
     <header>
       <h1><a href="/">Cortext Cache</a></h1>
     </header>
-    <main>
-      <h2>Latest Snippets</h2>
-      <p>There's nothing to see here yet!</p>
-    </main>
+    <main>{{template "main" .}}</main>
     <footer>Powered by <a href="https://golang.org/">Go</a></footer>
   </body>
 </html>
+{{end}}
