@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -13,6 +14,13 @@ func main() {
 
 	// flag.Parse() to parse cl flag
 	flag.Parse()
+
+	// third one is the flags to indicate what additional information to include (local date and time).
+	// Note that the flags are joined using the bitwise OR operator |.
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
+	// use the log.Lshortfile flag to include the relevant file name and line number.
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// ServeMux is a router which in this case register home function as handler for URL "/"
 	// create our own mux becoz DefaultServeMux is a global variable, any package can access it (Security Conerns)
@@ -32,7 +40,7 @@ func main() {
 
 	// The value returned from the flag.String() function is a pointer to the flag value, not the value itself.
 	// Note: any error returned by http.ListenAndServe is always non-nil
-	log.Printf("Starting server on port : %s", *addr)
+	infoLog.Printf("Starting server on port %s", *addr)
 	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	errorLog.Fatal(err)
 }
