@@ -76,3 +76,8 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte("Creating Snippet"))
 }
+
+// below is serving a single file(NOTE: it doesnt sanitize the path so BE CAREFUL, use filePath.Clean())
+// func downloadHandler(w http.ResponseWriter, r *http.Request) {
+// 		http.ServeFile(w, r, "./ui/static/file.zip")
+// }

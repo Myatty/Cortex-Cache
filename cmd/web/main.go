@@ -1,11 +1,18 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 )
 
 func main() {
+
+	// default is :4000, value is stored in addr variable
+	addr := flag.String("addr", ":4000", "HTTP network address")
+
+	// flag.Parse() to parse cl flag
+	flag.Parse()
 
 	// ServeMux is a router which in this case register home function as handler for URL "/"
 	// create our own mux becoz DefaultServeMux is a global variable, any package can access it (Security Conerns)
@@ -23,9 +30,9 @@ func main() {
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
 
-	// http.ListenAndServe() starts new web server and now it listens on tcp port 4000
+	// The value returned from the flag.String() function is a pointer to the flag value, not the value itself.
 	// Note: any error returned by http.ListenAndServe is always non-nil
-	log.Print("Starting server on port : 4000")
-	err := http.ListenAndServe(":4000", mux)
+	log.Printf("Starting server on port : %s", *addr)
+	err := http.ListenAndServe(*addr, mux)
 	log.Fatal(err)
 }
