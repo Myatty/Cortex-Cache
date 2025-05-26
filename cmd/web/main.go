@@ -38,9 +38,27 @@ func main() {
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
 
+	// Initialize a new http.Server struct. We set the Addr and Handler fields so
+	// that the server uses the same network address and routes as before, and set
+	// the ErrorLog field so that the server now uses the custom errorLog logger in
+	// the event of any problems.
+	srv := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
+
 	// The value returned from the flag.String() function is a pointer to the flag value, not the value itself.
 	// Note: any error returned by http.ListenAndServe is always non-nil
 	infoLog.Printf("Starting server on port %s", *addr)
-	err := http.ListenAndServe(*addr, mux)
+	err := srv.ListenAndServe()
 	errorLog.Fatal(err)
 }
+
+// can save logs inside certain files
+// f, err := os.OpenFile("/tmp/info.log", os.O_RDWR|os.O_CREATE, 0666)
+// if err != nil {
+// log.Fatal(err)
+// }
+// defer f.Close()
+// infoLog := log.New(f, "INFO\t", log.Ldate|log.Ltime)
