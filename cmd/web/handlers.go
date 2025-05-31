@@ -15,7 +15,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// checks if URL path is not "/", it returns error Page
 	// if we dont return it will also writes (w.Write)
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
@@ -30,8 +30,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// pass files as variadic parameter
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		//app.errorLog.Print(err.Error())
+		// http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err)
 		return
 	}
 
@@ -40,7 +41,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		app.errorLog.Print(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		// http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err)
 	}
 
 }
@@ -51,7 +53,8 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		// http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
@@ -68,8 +71,8 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Allow", http.MethodPost)
 		// w.WriteHeader(405)
 		// w.Write([]byte("Method Not Allowed!"))
-		http.Error(w, "Method not Allowed!", http.StatusMethodNotAllowed)
-
+		// http.Error(w, "Method not Allowed!", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
