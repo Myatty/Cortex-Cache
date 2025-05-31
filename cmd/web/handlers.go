@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -11,7 +10,7 @@ import (
 // Home handler function
 // http.ResponseWriter provides method for HTTP Response and sending it to user
 // *http.Request is pointer to struct which holds info about current request(HTTP method and URL being requested)
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	// checks if URL path is not "/", it returns error Page
 	// if we dont return it will also writes (w.Write)
@@ -31,7 +30,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// pass files as variadic parameter
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
@@ -40,13 +39,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// The last parameter to Execute() represents any dynamic data that we want to pass in
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 	}
 
 }
 
-func snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 
 	// return 404 not found error if requested id is not correct
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -60,7 +59,7 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Displaying a specific snippet with ID: %d", id)
 }
 
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 
 	// if we wanna send a non 200 status code, we must call w.WriteHeader()(which limit to only one for each response)
 	// we must set all Headers before WriteHeader
