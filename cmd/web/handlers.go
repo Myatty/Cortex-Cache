@@ -3,7 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
+
+	//"html/template"
 	"net/http"
 	"strconv"
 
@@ -22,31 +23,41 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// NOTE that the file containing base template must be the *first* file in the slice
-	files := []string{
-		"./ui/html/base.tmpl.html",
-		"./ui/html/partials/nav.tmpl.html",
-		"./ui/html/pages/home.tmpl.html",
-	}
-
-	// template.ParseFiles() function reads the template file into a template set
-	// pass files as variadic parameter
-	ts, err := template.ParseFiles(files...)
+	snippets, err := app.snippets.Latest()
 	if err != nil {
-		//app.errorLog.Print(err.Error())
-		// http.Error(w, "Internal Server Error", 500)
 		app.serverError(w, err)
 		return
 	}
 
-	// the ExecuteTemplate() method to write the content of the "base" template as response body
-	// The last parameter to Execute() represents any dynamic data that we want to pass in
-	err = ts.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		app.errorLog.Print(err.Error())
-		// http.Error(w, "Internal Server Error", 500)
-		app.serverError(w, err)
+	for _, snippet := range snippets {
+		fmt.Fprintf(w, "%+v\n", snippet)
 	}
+
+	// // NOTE that the file containing base template must be the *first* file in the slice
+	// files := []string{
+	// 	"./ui/html/base.tmpl.html",
+	// 	"./ui/html/partials/nav.tmpl.html",
+	// 	"./ui/html/pages/home.tmpl.html",
+	// }
+
+	// // template.ParseFiles() function reads the template file into a template set
+	// // pass files as variadic parameter
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	//app.errorLog.Print(err.Error())
+	// 	// http.Error(w, "Internal Server Error", 500)
+	// 	app.serverError(w, err)
+	// 	return
+	// }
+
+	// // the ExecuteTemplate() method to write the content of the "base" template as response body
+	// // The last parameter to Execute() represents any dynamic data that we want to pass in
+	// err = ts.ExecuteTemplate(w, "base", nil)
+	// if err != nil {
+	// 	app.errorLog.Print(err.Error())
+	// 	// http.Error(w, "Internal Server Error", 500)
+	// 	app.serverError(w, err)
+	// }
 
 }
 
