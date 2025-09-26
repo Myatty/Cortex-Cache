@@ -1,10 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
+
+	"cortexcache.myatty.net/internal/models"
 )
 
 // Home handler function
@@ -58,8 +61,21 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	snippet, err := app.snippets.Get(id)
+	if err != nil {
+
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	fmt.Fprintf(w, "%+v", snippet)
+
 	// use fmt.Fprintf to interpolate id value with response and write it to http.ResponseWriter
-	fmt.Fprintf(w, "Displaying a specific snippet with ID: %d", id)
+	//fmt.Fprintf(w, "Displaying a specific snippet with ID: %d", id)
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
