@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"cortexcache.myatty.net/internal/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -14,6 +16,7 @@ import (
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -41,6 +44,7 @@ func main() {
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	// Initialize a new http.Server struct. We set the Addr and Handler fields so

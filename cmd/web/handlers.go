@@ -66,7 +66,7 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 
 	// if we wanna send a non 200 status code, we must call w.WriteHeader()(which limit to only one for each response)
 	// we must set all Headers before WriteHeader
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 
 		w.Header().Set("Allow", http.MethodPost)
 		// w.WriteHeader(405)
@@ -76,7 +76,17 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Creating Snippet"))
+	title := "0 snail"
+	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Myint Myat"
+	expires := 7
+
+	id, err := app.snippets.Insert(title, content, expires)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
 }
 
 // below is serving a single file(NOTE: it doesnt sanitize the path so BE CAREFUL, use filePath.Clean())
