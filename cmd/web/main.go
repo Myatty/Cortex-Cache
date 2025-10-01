@@ -12,7 +12,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// application struct, for app wide dependencies for webapp
+// for app wide dependencies
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
@@ -21,15 +21,11 @@ type application struct {
 
 func main() {
 
-	// default is :4000, value is stored in addr variable
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	dsn := flag.String("dsn", "web:Lucifer@/cortexCache?parseTime=true", "MySQL data source name")
 
-	// flag.Parse() to parse cl flag
 	flag.Parse()
 
-	// third one is the flags to indicate what additional information to include (local date and time).
-	// Note that the flags are joined using the bitwise OR operator |.
 	// use the log.Lshortfile flag to include the relevant file name and line number.
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
