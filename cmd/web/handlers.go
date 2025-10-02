@@ -93,16 +93,15 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", snippet)
+	data := &templateData{
+		Snippet: snippet,
+	}
+
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-
-	//fmt.Fprintf(w, "%+v", snippet)
-
-	// use fmt.Fprintf to interpolate id value with response and write it to http.ResponseWriter
-	//fmt.Fprintf(w, "Displaying a specific snippet with ID: %d", id)
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
