@@ -82,9 +82,9 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	files := []string{
-		"./ui/html/base.tmpl",
-		"./ui/html/partials/nav.tmpl",
-		"./ui/html/pages/view.tmpl",
+		"./ui/html/base.tmpl.html",
+		"./ui/html/partials/nav.tmpl.html",
+		"./ui/html/pages/view.tmpl.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -99,7 +99,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "%+v", snippet)
+	//fmt.Fprintf(w, "%+v", snippet)
 
 	// use fmt.Fprintf to interpolate id value with response and write it to http.ResponseWriter
 	//fmt.Fprintf(w, "Displaying a specific snippet with ID: %d", id)
