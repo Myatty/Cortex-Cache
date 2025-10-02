@@ -17,7 +17,6 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	// checks if URL path is not "/", it returns error Page
-	// if we dont return it will also writes (w.Write)
 	if r.URL.Path != "/" {
 		app.notFound(w)
 		return
@@ -29,36 +28,33 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet)
+	// for _, snippet := range snippets {
+	// 	fmt.Fprintf(w, "%+v\n", snippet)
+	// }
+
+	// NOTE that the file containing base template must be the *first* file in the slice
+	files := []string{
+		"./ui/html/base.tmpl.html",
+		"./ui/html/partials/nav.tmpl.html",
+		"./ui/html/pages/home.tmpl.html",
 	}
 
-	// // NOTE that the file containing base template must be the *first* file in the slice
-	// files := []string{
-	// 	"./ui/html/base.tmpl.html",
-	// 	"./ui/html/partials/nav.tmpl.html",
-	// 	"./ui/html/pages/home.tmpl.html",
-	// }
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 
-	// // template.ParseFiles() function reads the template file into a template set
-	// // pass files as variadic parameter
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	//app.errorLog.Print(err.Error())
-	// 	// http.Error(w, "Internal Server Error", 500)
-	// 	app.serverError(w, err)
-	// 	return
-	// }
+	data := &templateData{
+		Snippets: snippets,
+	}
 
-	// // the ExecuteTemplate() method to write the content of the "base" template as response body
-	// // The last parameter to Execute() represents any dynamic data that we want to pass in
-	// err = ts.ExecuteTemplate(w, "base", nil)
-	// if err != nil {
-	// 	app.errorLog.Print(err.Error())
-	// 	// http.Error(w, "Internal Server Error", 500)
-	// 	app.serverError(w, err)
-	// }
-
+	// ExecuteTemplate() method writes the content of the "base" template as response body
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.errorLog.Print(err.Error())
+		app.serverError(w, err)
+	}
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
