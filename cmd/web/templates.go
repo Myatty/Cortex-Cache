@@ -5,6 +5,7 @@ import (
 
 	"html/template"
 	"path/filepath"
+	"time"
 )
 
 // act as holding structure for dynamic data which will be passed to html tmpls
@@ -12,6 +13,16 @@ type templateData struct {
 	CurrentYear int
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
+}
+
+// to format time string
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
+}
+
+// store as global var
+var functions = template.FuncMap{
+	"humanDate": humanDate,
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
@@ -27,7 +38,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 		name := filepath.Base(page)
 
-		ts, err := template.ParseFiles("./ui/html/base.tmpl.html")
+		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl.html")
 		if err != nil {
 			return nil, err
 		}
