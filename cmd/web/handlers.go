@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"cortexcache.myatty.net/internal/models"
+	"github.com/julienschmidt/httprouter"
 )
 
 // Home handler function
@@ -15,11 +16,12 @@ import (
 // *http.Request is pointer to struct which holds info about current request(HTTP method and URL being requested)
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
+	// httprouter can check this, so ill just remove this
 	// checks if URL path is not "/", it returns error Page
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
+	// if r.URL.Path != "/" {
+	// 	app.notFound(w)
+	// 	return
+	// }
 
 	snippets, err := app.snippets.Latest()
 	if err != nil {
@@ -36,10 +38,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 
-	// return 404 not found error if requested id is not correct
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	params := httprouter.ParamsFromContext(r.Context())
+
+	// return 404 not found error if requested id is not valid
+	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil || id < 1 {
-		// http.NotFound(w, r)
 		app.notFound(w)
 		return
 	}
@@ -61,18 +64,19 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Display the form fo creating new Snippet ... "))
+}
 
+func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+
+	// checking if its POST method or not is done by httprouter, so ill remove this also
 	// if we wanna send a non 200 status code, we must call w.WriteHeader()(which limit to only one for each response)
 	// we must set all Headers before WriteHeader
-	if r.Method != http.MethodPost {
-
-		w.Header().Set("Allow", http.MethodPost)
-		// w.WriteHeader(405)
-		// w.Write([]byte("Method Not Allowed!"))
-		// http.Error(w, "Method not Allowed!", http.StatusMethodNotAllowed)
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	w.Header().Set("Allow", http.MethodPost)
+	// 	app.clientError(w, http.StatusMethodNotAllowed)
+	// 	return
+	// }
 
 	title := "0 snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Myint Myat"
@@ -84,7 +88,8 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
+	// refactor "/snippet/view?id=%d" becoz httprouter can provide Clean URL format
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }
 
 // below is serving a single file(NOTE: it doesnt sanitize the path so BE CAREFUL, use filePath.Clean())
