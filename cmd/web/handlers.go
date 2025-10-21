@@ -77,6 +77,8 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	// aviod r.FormValue() and r.PostFormValue()
+	// becoz they silently ignore any errors returned by r.ParseForm()
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 
