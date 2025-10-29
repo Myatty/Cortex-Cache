@@ -80,7 +80,7 @@ func main() {
 	// The value returned from the flag.String() function is a pointer to the flag value, not the value itself.
 	// Note: any error returned by http.ListenAndServe is always non-nil
 	infoLog.Printf("Starting server on port %s", *addr)
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errorLog.Fatal(err)
 }
 
