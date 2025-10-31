@@ -18,10 +18,17 @@ type snippetCreateForm struct {
 	validator.Validator `form:"-"`
 }
 
+type userSignupForm struct {
+	Name                string `form:"name"`
+	Email               string `form:"email"`
+	Password            string `form:"password"`
+	validator.Validator `form:"-"`
+}
+
 // *http.Request is pointer to struct which holds info about current request(HTTP method and URL being requested)
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
-	// httprouter can check this, so ill just remove this
+	// NOTE: httprouter can check this, so ill just remove this
 	// checks if URL path is not "/", it returns error Page
 	// if r.URL.Path != "/" {
 	// 	app.notFound(w)
@@ -113,6 +120,52 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 
 	// refactor "/snippet/view?id=%d" becoz httprouter can provide Clean URL format
 	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
+}
+
+func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
+
+	data := app.newTemplateData(r)
+	data.Form = userSignupForm{}
+	app.render(w, http.StatusOK, "signup.tmpl.html", data)
+}
+
+func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
+
+	var form userSignupForm
+
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.Name), "name", "This field cannot be empty")
+	form.CheckField(validator.NotBlank(form.Email), "email", "This field cannot be empty")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "This field must be a valid email address")
+	form.CheckField(validator.NotBlank(form.Password), "password", "This field cannot be blank")
+	form.CheckField(validator.MinChars(form.Password, 8), "password", "This field must be at least 8 characters long")
+
+	if !form.Valid() {
+		data := app.newTemplateData(r)
+		data.Form = form
+		app.render(w, http.StatusUnprocessableEntity, "signup.tmpl.html", data)
+		return
+	}
+
+	// need to implement business logic here
+	fmt.Fprintln(w, "Created a new user...")
+}
+
+func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Display a HTML form for logging in a user...")
+}
+
+func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Authenticate and login the user...")
+}
+
+func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Logout the user...")
 }
 
 // below is serving a single file(NOTE: it doesnt sanitize the path so BE CAREFUL, use filePath.Clean())
