@@ -24,7 +24,7 @@ func (app *application) routes() http.Handler {
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 
-	dynamic := alice.New(app.sessionManager.LoadAndSave)
+	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf)
 
 	// URL "/" sub-tree pattern is a catch-all, all URL requests will be handled by this(its like "/**")
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
