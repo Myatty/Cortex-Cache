@@ -120,7 +120,7 @@ Purpose: keep handler methods simple and testable by providing a single place fo
   - `hashed_password`
   - `created` (UTC_TIMESTAMP())
 
-### Example `CREATE TABLE` SQL (adapt to your MySQL flavor)
+### Database Schema
 ```sql
 
 CREATE TABLE snippets (
