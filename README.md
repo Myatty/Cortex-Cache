@@ -8,7 +8,7 @@ Main app entry: `main.go`. The app uses dependency injection via an application 
 ## Quick Links
 
 - Application entry: `main.go`
-- Router and middleware: `routes.go` 
+- Routers: `routes.go` 
 - Request handlers: `handlers.go`
 - Template loading + helper: `templates.go`
 - Helpers + rendering: `helpers.go`
