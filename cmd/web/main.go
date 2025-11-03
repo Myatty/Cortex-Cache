@@ -12,7 +12,7 @@ import (
 
 	"cortexcache.myatty.net/internal/models"
 
-	"github.com/alexedwards/scs/mysqlstore" // New import
+	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
@@ -36,7 +36,7 @@ func main() {
 
 	flag.Parse()
 
-	// use the log.Lshortfile flag to include the relevant file name and line number.
+	// use the log.Lshortfile flag to include the relevant file name and line number
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
@@ -90,8 +90,8 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	// The value returned from the flag.String() function is a pointer to the flag value, not the value itself.
-	// Note: any error returned by http.ListenAndServe is always non-nil
+	// The value returned from the flag.String() function is a pointer to the flag value, not the value itself
+	// Note: update srv.ListenAndServe to serve via HTTP
 	infoLog.Printf("Starting server on port %s", *addr)
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errorLog.Fatal(err)
